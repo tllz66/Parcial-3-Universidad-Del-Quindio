@@ -46,5 +46,85 @@ public class CentroEcoRuta {
     }
 
 
+    public boolean agregarLote(String cod, Lote l) {
+        Entrega entrega = buscarEntrega(cod);
+        if (entrega == null) {
+            return false;
+        }
+        return entrega.agregarLote(l);
+    }
 
+
+    public boolean aceptarEntrega(String cod) {
+        Entrega entrega = buscarEntrega(cod);
+        if (entrega == null) {
+            return false;
+        }
+        return entrega.aceptar();
+    }
+
+
+    public Comprobante consultarComprobante(String cod) {
+        Entrega entrega = buscarEntrega(cod);
+        if (entrega == null) {
+            return null;
+        }
+        return entrega.getComprobante();
+    }
+
+
+    public List<String> consultarEtiquetas(String cod) {
+        Entrega entrega = buscarEntrega(cod);
+        if (entrega == null) {
+            return null;
+        }
+        if (entrega.estaAbierta()) {
+            return null;
+        }
+        return entrega.getEtiquetas();
+    }
+
+
+    public double calcularValorAcumulado(String id) {
+        double acumulado = 0;
+        for (Entrega entrega : entregas) {
+            Comprobante comprobante = entrega.getComprobante();
+            if (comprobante != null && comprobante.idAportante().equals(id)) {
+                acumulado = acumulado + comprobante.valorTotal();
+            }
+        }
+        return acumulado;
+    }
+
+    public Entrega buscarEntrega(String cod) {
+        Entrega encontrada = null;
+        for (Entrega entrega : entregas) {
+            if (entrega.getCodigo().equalsIgnoreCase(cod)) {
+                encontrada = entrega;
+            }
+        }
+        return encontrada;
+    }
+
+    public Aportante buscarAportante(String id) {
+        Aportante encontrado = null;
+        for (Aportante aportante : aportantes) {
+            if (aportante.identificacion().equals(id)) {
+                encontrado = aportante;
+            }
+        }
+        return encontrado;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public List<Aportante> getAportantes() {
+        return Collections.unmodifiableList(aportantes);
+    }
+
+    public List<Entrega> getEntregas() {
+        return Collections.unmodifiableList(entregas);
+    }
 }
